@@ -30,18 +30,19 @@ class DriverFactory:
         """
         
         if browser_name.lower() == "chrome":
+            import tempfile
             options = webdriver.ChromeOptions()
-            
             if headless:
                 options.add_argument("--headless=new")
-                
             # Add useful options
             options.add_argument("--start-maximized")
             options.add_argument("--disable-extensions")
             options.add_argument("--disable-popup-blocking")
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
-            
+            # 為每個 session 指定唯一的 user-data-dir，避免併發衝突
+            user_data_dir = tempfile.mkdtemp()
+            options.add_argument(f'--user-data-dir={user_data_dir}')
             # Selenium 4.6+ automatically manages ChromeDriver
             driver = webdriver.Chrome(options=options)
             
