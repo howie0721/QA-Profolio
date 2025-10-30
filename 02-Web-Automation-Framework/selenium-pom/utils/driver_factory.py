@@ -8,6 +8,7 @@ and it gives you a ready-to-use browser driver.
 Note: Selenium 4.6+ includes automatic driver management, so we don't need webdriver-manager
 """
 
+import os
 from selenium import webdriver
 
 
@@ -28,17 +29,28 @@ class DriverFactory:
         Returns:
             WebDriver object
         """
-        
+        # 在 CI 或設有 HEADLESS 環境變數時強制使用 headless
+        env_headless = str(os.environ.get("HEADLESS", "")).lower() in {"1", "true", "yes"}
+        ci_env = str(os.environ.get("CI", "")).lower() in {"1", "true", "yes"}
+        effective_headless = headless or env_headless or ci_env
+
         if browser_name.lower() == "chrome":
             options = webdriver.ChromeOptions()
-            if headless:
+            if effective_headless:
                 options.add_argument("--headless=new")
+                options.add_argument("--window-size=1920,1080")
+                # 避免 Headless 新模式的除錯埠衝突
+                options.add_argument("--remote-debugging-port=0")
+            else:
+                options.add_argument("--start-maximized")
             # Add useful options
-            options.add_argument("--start-maximized")
             options.add_argument("--disable-extensions")
             options.add_argument("--disable-popup-blocking")
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--no-first-run")
+            options.add_argument("--no-default-browser-check")
             # Selenium 4.6+ automatically manages ChromeDriver
             driver = webdriver.Chrome(options=options)
             
