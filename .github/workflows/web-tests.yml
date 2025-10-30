@@ -1,0 +1,75 @@
+name: Web Automation Tests
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '02-Web-Automation-Framework/**'
+      - '.github/workflows/web-tests.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '02-Web-Automation-Framework/**'
+  workflow_dispatch:
+
+jobs:
+  web-tests:
+    name: Run Web UI Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+    
+    - name: Install Dependencies
+      working-directory: ./02-Web-Automation-Framework/selenium-pom
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    # Install Chrome browser for headless testing
+    - name: Install Chrome
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: stable
+    
+    # Run tests in headless mode
+    - name: Run Web Tests (Headless)
+      working-directory: ./02-Web-Automation-Framework/selenium-pom
+      run: |
+        pytest tests/ -v --html=test-reports/web-test-report.html --self-contained-html
+      env:
+        HEADLESS: true
+      continue-on-error: false
+    
+    - name: Upload Test Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: web-test-report
+        path: 02-Web-Automation-Framework/selenium-pom/test-reports/
+        retention-days: 30
+    
+    - name: Upload Screenshots (if any)
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: failure-screenshots
+        path: 02-Web-Automation-Framework/selenium-pom/screenshots/
+        retention-days: 7
+    
+    - name: Test Summary
+      if: always()
+      run: |
+        echo "## Web UI Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "🌐 Browser: Chrome (Headless)" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Tests completed!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📊 View detailed report in artifacts" >> $GITHUB_STEP_SUMMARY

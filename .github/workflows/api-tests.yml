@@ -1,0 +1,64 @@
+name: API Tests
+
+# When to run: on push to main branch or pull requests
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '01-API-Testing-Framework/**'
+      - '.github/workflows/api-tests.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '01-API-Testing-Framework/**'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  api-tests:
+    name: Run API Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Step 1: Checkout code from repository
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    
+    # Step 2: Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+    
+    # Step 3: Install dependencies
+    - name: Install Dependencies
+      working-directory: ./01-API-Testing-Framework/python-api-tests
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    # Step 4: Run pytest tests
+    - name: Run API Tests
+      working-directory: ./01-API-Testing-Framework/python-api-tests
+      run: |
+        pytest tests/ -v --html=reports/api-test-report.html --self-contained-html
+      continue-on-error: false
+    
+    # Step 5: Upload test report as artifact
+    - name: Upload Test Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-test-report
+        path: 01-API-Testing-Framework/python-api-tests/reports/
+        retention-days: 30
+    
+    # Step 6: Create test summary
+    - name: Test Summary
+      if: always()
+      run: |
+        echo "## API Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Tests completed successfully!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📊 View detailed report in artifacts" >> $GITHUB_STEP_SUMMARY

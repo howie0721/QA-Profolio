@@ -1,0 +1,179 @@
+pipeline {
+    agent any
+    
+    // Define environment variables
+    environment {
+        PYTHON_VERSION = '3.12'
+        PROJECT_NAME = 'QA-Portfolio'
+    }
+    
+    // Trigger conditions
+    triggers {
+        // Poll SCM every 5 minutes
+        pollSCM('H/5 * * * *')
+        // Run daily at 2 AM
+        cron('0 2 * * *')
+    }
+    
+    // Pipeline parameters
+    parameters {
+        choice(
+            name: 'TEST_SUITE',
+            choices: ['all', 'api', 'web', 'performance'],
+            description: 'Which test suite to run?'
+        )
+        booleanParam(
+            name: 'SKIP_PERFORMANCE_TESTS',
+            defaultValue: false,
+            description: 'Skip performance tests (they take longer)'
+        )
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out code from repository...'
+                checkout scm
+            }
+        }
+        
+        stage('Setup Environment') {
+            steps {
+                echo 'Setting up Python environment...'
+                sh '''
+                    python3 --version
+                    pip3 install --upgrade pip
+                '''
+            }
+        }
+        
+        stage('API Tests') {
+            when {
+                expression { params.TEST_SUITE == 'all' || params.TEST_SUITE == 'api' }
+            }
+            steps {
+                echo 'Running API Tests...'
+                dir('01-API-Testing-Framework/python-api-tests') {
+                    sh '''
+                        pip3 install -r requirements.txt
+                        pytest tests/ -v --html=reports/api-test-report.html --self-contained-html --junitxml=reports/junit.xml
+                    '''
+                }
+            }
+            post {
+                always {
+                    junit '01-API-Testing-Framework/python-api-tests/reports/junit.xml'
+                    publishHTML([
+                        reportDir: '01-API-Testing-Framework/python-api-tests/reports',
+                        reportFiles: 'api-test-report.html',
+                        reportName: 'API Test Report',
+                        keepAll: true
+                    ])
+                }
+            }
+        }
+        
+        stage('Web UI Tests') {
+            when {
+                expression { params.TEST_SUITE == 'all' || params.TEST_SUITE == 'web' }
+            }
+            steps {
+                echo 'Running Web UI Tests...'
+                dir('02-Web-Automation-Framework/selenium-pom') {
+                    sh '''
+                        pip3 install -r requirements.txt
+                        export HEADLESS=true
+                        pytest tests/ -v --html=test-reports/web-test-report.html --self-contained-html --junitxml=test-reports/junit.xml
+                    '''
+                }
+            }
+            post {
+                always {
+                    junit '02-Web-Automation-Framework/selenium-pom/test-reports/junit.xml'
+                    publishHTML([
+                        reportDir: '02-Web-Automation-Framework/selenium-pom/test-reports',
+                        reportFiles: 'web-test-report.html',
+                        reportName: 'Web Test Report',
+                        keepAll: true
+                    ])
+                }
+                failure {
+                    // Archive screenshots on failure
+                    archiveArtifacts artifacts: '02-Web-Automation-Framework/selenium-pom/screenshots/**/*.png', allowEmptyArchive: true
+                }
+            }
+        }
+        
+        stage('Performance Tests') {
+            when {
+                expression { 
+                    (params.TEST_SUITE == 'all' || params.TEST_SUITE == 'performance') && 
+                    !params.SKIP_PERFORMANCE_TESTS 
+                }
+            }
+            steps {
+                echo 'Running Performance Tests...'
+                dir('03-Performance-Testing') {
+                    sh '''
+                        pip3 install -r requirements.txt
+                        locust -f locust-scripts/basic_load_test.py \
+                            --host=https://jsonplaceholder.typicode.com \
+                            --users 50 \
+                            --spawn-rate 10 \
+                            --run-time 2m \
+                            --headless \
+                            --html=performance-reports/jenkins-report.html \
+                            --csv=performance-reports/results
+                    '''
+                }
+            }
+            post {
+                always {
+                    publishHTML([
+                        reportDir: '03-Performance-Testing/performance-reports',
+                        reportFiles: 'jenkins-report.html',
+                        reportName: 'Performance Test Report',
+                        keepAll: true
+                    ])
+                    archiveArtifacts artifacts: '03-Performance-Testing/performance-reports/**/*.csv', allowEmptyArchive: true
+                }
+            }
+        }
+        
+        stage('Generate Summary') {
+            steps {
+                echo 'Generating test summary...'
+                script {
+                    def summary = """
+                    ========================================
+                    QA Portfolio - Test Suite Summary
+                    ========================================
+                    Test Suite: ${params.TEST_SUITE}
+                    Build Number: ${env.BUILD_NUMBER}
+                    Branch: ${env.BRANCH_NAME}
+                    ========================================
+                    """
+                    echo summary
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            echo 'Pipeline execution completed'
+            cleanWs()
+        }
+        success {
+            echo '✅ All tests passed successfully!'
+            // Send success notification (configure email/Slack here)
+        }
+        failure {
+            echo '❌ Tests failed! Check the reports for details.'
+            // Send failure notification
+        }
+        unstable {
+            echo '⚠️ Tests are unstable! Some tests may have failed.'
+        }
+    }
+}

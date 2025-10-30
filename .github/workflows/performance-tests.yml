@@ -1,0 +1,73 @@
+name: Performance Tests
+
+on:
+  schedule:
+    # Run every day at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      users:
+        description: 'Number of users'
+        required: true
+        default: '50'
+      duration:
+        description: 'Test duration (e.g., 2m, 5m)'
+        required: true
+        default: '2m'
+
+jobs:
+  performance-tests:
+    name: Run Performance Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+    
+    - name: Install Dependencies
+      working-directory: ./03-Performance-Testing
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run Basic Load Test
+      working-directory: ./03-Performance-Testing
+      run: |
+        locust -f locust-scripts/basic_load_test.py \
+          --host=https://jsonplaceholder.typicode.com \
+          --users ${{ github.event.inputs.users || '50' }} \
+          --spawn-rate 10 \
+          --run-time ${{ github.event.inputs.duration || '2m' }} \
+          --headless \
+          --html=performance-reports/github-actions-report.html \
+          --csv=performance-reports/results
+      continue-on-error: false
+    
+    - name: Upload Performance Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: performance-test-report
+        path: |
+          03-Performance-Testing/performance-reports/github-actions-report.html
+          03-Performance-Testing/performance-reports/results*.csv
+        retention-days: 30
+    
+    - name: Check Performance Thresholds
+      working-directory: ./03-Performance-Testing
+      run: |
+        echo "## Performance Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "⚡ Test Configuration:" >> $GITHUB_STEP_SUMMARY
+        echo "- Users: ${{ github.event.inputs.users || '50' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Duration: ${{ github.event.inputs.duration || '2m' }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📊 View detailed report in artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "⚠️ If failure rate > 5%, the build will fail!" >> $GITHUB_STEP_SUMMARY

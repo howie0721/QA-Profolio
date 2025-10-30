@@ -1,0 +1,210 @@
+{
+  "info": {
+    "name": "JSONPlaceholder API 測試集合",
+    "description": "這是一個完整的 API 測試集合，測試所有的 CRUD 操作（建立、讀取、更新、刪除）",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. 取得所有文章 (GET)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// 測試 1：檢查狀態碼是否為 200",
+              "pm.test('狀態碼應該是 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// 測試 2：檢查回應時間是否在 2 秒內",
+              "pm.test('回應時間應該少於 2 秒', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+              "});",
+              "",
+              "// 測試 3：檢查回傳的是不是陣列",
+              "pm.test('回傳資料應該是陣列', function () {",
+              "    const posts = pm.response.json();",
+              "    pm.expect(posts).to.be.an('array');",
+              "    pm.expect(posts.length).to.be.above(0);",
+              "});",
+              "",
+              "// 測試 4：檢查第一筆資料的結構",
+              "pm.test('文章應該包含必要欄位', function () {",
+              "    const firstPost = pm.response.json()[0];",
+              "    pm.expect(firstPost).to.have.property('id');",
+              "    pm.expect(firstPost).to.have.property('title');",
+              "    pm.expect(firstPost).to.have.property('body');",
+              "    pm.expect(firstPost).to.have.property('userId');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["posts"]
+        },
+        "description": "取得所有文章的列表"
+      },
+      "response": []
+    },
+    {
+      "name": "2. 取得單一文章 (GET)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('狀態碼應該是 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('文章 ID 應該是 1', function () {",
+              "    const post = pm.response.json();",
+              "    pm.expect(post.id).to.eql(1);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts/1",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["posts", "1"]
+        },
+        "description": "取得 ID 為 1 的文章"
+      },
+      "response": []
+    },
+    {
+      "name": "3. 新增文章 (POST)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('狀態碼應該是 201 (已建立)', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('新文章應該有 ID', function () {",
+              "    const post = pm.response.json();",
+              "    pm.expect(post).to.have.property('id');",
+              "});",
+              "",
+              "pm.test('標題和內容應該正確', function () {",
+              "    const post = pm.response.json();",
+              "    pm.expect(post.title).to.eql('測試文章標題');",
+              "    pm.expect(post.body).to.eql('這是測試文章的內容');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"title\": \"測試文章標題\",\n    \"body\": \"這是測試文章的內容\",\n    \"userId\": 1\n}"
+        },
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["posts"]
+        },
+        "description": "新增一篇新文章"
+      },
+      "response": []
+    },
+    {
+      "name": "4. 更新文章 (PUT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('狀態碼應該是 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('文章內容應該已更新', function () {",
+              "    const post = pm.response.json();",
+              "    pm.expect(post.title).to.eql('更新後的標題');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"id\": 1,\n    \"title\": \"更新後的標題\",\n    \"body\": \"更新後的內容\",\n    \"userId\": 1\n}"
+        },
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts/1",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["posts", "1"]
+        },
+        "description": "更新 ID 為 1 的文章"
+      },
+      "response": []
+    },
+    {
+      "name": "5. 刪除文章 (DELETE)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('狀態碼應該是 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts/1",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["posts", "1"]
+        },
+        "description": "刪除 ID 為 1 的文章"
+      },
+      "response": []
+    }
+  ]
+}
