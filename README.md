@@ -1,8 +1,14 @@
 # 🎯 QA Portfolio - Senior Software QA Engineer
 
+![API Tests](https://github.com/howie0721/QA-Profolio/workflows/API%20Tests/badge.svg)
+![Web Tests](https://github.com/howie0721/QA-Profolio/workflows/Web%20Automation%20Tests/badge.svg)
+![Performance Tests](https://github.com/howie0721/QA-Profolio/workflows/Performance%20Tests/badge.svg)
+
 > **目標職位**: 昕力資訊 - (資深)自動化軟體測試工程師  
-> **作者**: Howie
-> **聯絡方式**: howie0721@gmail.com
+> **作者**: Howie  
+> **聯絡方式**: howie0721@gmail.com  
+> **GitHub**: https://github.com/howie0721/QA-Profolio
+
 ---
 
 ## 📋 專案概述
