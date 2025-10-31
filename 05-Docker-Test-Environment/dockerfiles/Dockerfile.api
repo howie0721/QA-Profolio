@@ -10,15 +10,15 @@ WORKDIR /app
 COPY 01-API-Testing-Framework/ /app/01-API-Testing-Framework/
 
 # 安裝 Python 依賴
-RUN pip install --no-cache-dir -r /app/01-API-Testing-Framework/requirements.txt
+RUN pip install --no-cache-dir -r /app/01-API-Testing-Framework/python-api-tests/requirements.txt
 
 # 設定預設執行命令
 # 執行 API 測試並生成 HTML 報告
 CMD ["pytest", \
-     "01-API-Testing-Framework/tests/", \
-     "-v", \
-     "--html=01-API-Testing-Framework/test-reports/api-docker-report.html", \
-     "--self-contained-html"]
+    "01-API-Testing-Framework/python-api-tests/tests/", \
+    "-v", \
+    "--html=01-API-Testing-Framework/test-reports/api-docker-report.html", \
+    "--self-contained-html"]
 
 # 健康檢查 (可選)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
