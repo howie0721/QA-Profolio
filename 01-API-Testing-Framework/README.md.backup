@@ -1,853 +1,428 @@
-# 📡 Chapter 1: API Testing Framework
 
 # 📡 Chapter 1: API Testing Framework
 
-![API Tests](https://img.shields.io/badge/tests-8%20passed-brightgreen)
+這是一個生產級 API 自動化測試框架，適合新手到進階自動化測試工程師學習與展示。你將循序漸進學會：環境安裝、API 測試設計、測試執行、報告產出與覆蓋率分析。
 
-![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)這是一個生產級 API 自動化測試框架，適合新手到進階自動化測試工程師學習與展示。你將循序漸進學會：環境安裝、API 測試設計、測試執行、報告產出與覆蓋率分析。
+---
 
-![Python](https://img.shields.io/badge/Python-3.12-blue)
+## 1️⃣ 安裝與準備
 
-![pytest](https://img.shields.io/badge/pytest-7.4-blue)---
-
-
-
-> 這是一個生產級 API 自動化測試框架。你將循序漸進學會：環境安裝、API 測試設計、測試執行、報告產出與覆蓋率分析。## 1️⃣ 安裝與準備
-
-
-
----### 步驟 1：安裝 Postman 與 Newman
-
+### 步驟 1：安裝 Postman 與 Newman
 ```powershell
-
-## 📋 目錄npm install -g newman newman-reporter-htmlextra
-
+npm install -g newman newman-reporter-htmlextra
 ```
 
-- [1️⃣ 環境安裝](#1️⃣-環境安裝)
-
-- [2️⃣ 執行 API 測試](#2️⃣-執行-api-測試)### 步驟 2：安裝 Python 依賴
-
-- [3️⃣ 查看測試報告](#3️⃣-查看測試報告)```powershell
-
-- [4️⃣ 測試案例詳解](#4️⃣-測試案例詳解)cd 01-API-Testing-Framework/python-api-tests
-
-- [5️⃣ 進階技巧](#5️⃣-進階技巧)pip install -r requirements.txt
-
-- [6️⃣ 常見問題](#6️⃣-常見問題)```
-
-- [7️⃣ 章節總結](#7️⃣-章節總結)
+### 步驟 2：安裝 Python 依賴
+```powershell
+cd 01-API-Testing-Framework/python-api-tests
+pip install -r requirements.txt
+```
 
 ### 步驟 3：快速驗證環境
-
----```powershell
-
+```powershell
 pytest --version
-
-## 1️⃣ 環境安裝python -c "import requests; print('✅ 環境準備完成')"
-
+python -c "import requests; print('✅ 環境準備完成')"
 ```
 
-### 步驟 1：安裝 Newman（Postman CLI 工具）
+> **本章測試覆蓋率**：100%（所有依賴皆自動驗證）
 
-```powershell> **本章測試覆蓋率**：100%（所有依賴皆自動驗證）
+---
 
-npm install -g newman newman-reporter-htmlextra
+## 2️⃣ 執行 API 測試
 
-```---
-
-
-
-### 步驟 2：安裝 Python 測試依賴## 2️⃣ 執行 API 測試
-
+### 步驟 1：執行 Python API 測試
 ```powershell
-
-cd 01-API-Testing-Framework/python-api-tests### 步驟 1：執行 Python API 測試
-
-pip install -r requirements.txt```powershell
-
-```pytest tests/ -v --html=../test-reports/api-report.html
-
+pytest tests/ -v --html=../test-reports/api-report.html
 ```
+> 產出詳細 HTML 測試報告於 `test-reports/api-report.html`
 
-### 步驟 3：驗證環境> 產出詳細 HTML 測試報告於 `test-reports/api-report.html`
-
+### 步驟 2：執行 Postman Collection 測試
 ```powershell
-
-pytest --version### 步驟 2：執行 Postman Collection 測試
-
-python -c "import requests; print('✅ 環境準備完成')"```powershell
-
-```newman run postman/API-Test-Collection.json -r htmlextra --reporter-htmlextra-export reports/postman-report.html
-
+newman run postman/API-Test-Collection.json -r htmlextra --reporter-htmlextra-export reports/postman-report.html
 ```
+> 產出精美 Postman 測試報告於 `reports/postman-report.html`
 
-> **本章節測試覆蓋率**：100%（所有依賴已自動驗證）> 產出精美 Postman 測試報告於 `reports/postman-report.html`
-
-
-
----#### 測試亮點
-
+#### 測試亮點
 - 覆蓋所有 CRUD 與業務流（註冊、登入、發文、查詢、編輯、刪除、登出）
-
-## 2️⃣ 執行 API 測試- 嚴謹驗證狀態碼、資料結構、異常處理
-
+- 嚴謹驗證狀態碼、資料結構、異常處理
 - 測試腳本有詳細註解，易於溝通展示
-
-### 測試目標
 
 > **本章測試通過率**：100%（8/8 測試案例全數通過，回應時間 < 3 秒）
 
-| 項目 | 說明 |
+---
 
-|------|------|---
+## 3️⃣ 查看測試報告與覆蓋率
 
-| **測試 API** | [JSONPlaceholder](https://jsonplaceholder.typicode.com) - 免費測試 API |
-
-| **測試數量** | 8 個核心案例 |## 3️⃣ 查看測試報告與覆蓋率
-
-| **測試類型** | 正向、負向、效能、邊界測試 |
-
-| **執行時間** | < 3 秒完成所有測試 |### 步驟 1：開啟 HTML 測試報告
-
+### 步驟 1：開啟 HTML 測試報告
 ```powershell
-
-### 方式 1：執行 Python API 測試start ../test-reports/api-report.html
-
-```powershellstart reports/postman-report.html
-
-pytest tests/ -v --html=../test-reports/api-report.html```
-
+start ../test-reports/api-report.html
+start reports/postman-report.html
 ```
 
-- 產出 HTML 測試報告於 `test-reports/api-report.html`### 步驟 2：檢查測試覆蓋率與重點
-
-- 包含詳細測試結果、執行時間、錯誤訊息- Python 測試：100% 覆蓋所有 API 正向、負向、效能、邊界案例
-
+### 步驟 2：檢查測試覆蓋率與重點
+- Python 測試：100% 覆蓋所有 API 正向、負向、效能、邊界案例
 - Postman Collection：完整業務流自動化，涵蓋註冊到刪除
 
-### 方式 2：執行 Postman Collection 測試
-
-```powershell#### 章節亮點
-
-newman run postman/API-Test-Collection.json -r htmlextra --reporter-htmlextra-export reports/postman-report.html- 測試設計模組化、資料驅動、斷言清晰
-
-```- 報告格式專業，適合面試現場展示
-
-- 模擬真實業務流：註冊→登入→發文→查詢→編輯→刪除→登出- 測試執行快速穩定，CI/CD、Docker 皆可整合
-
-- 產出精美 Postman 測試報告於 `reports/postman-report.html`
+#### 章節亮點
+- 測試設計模組化、資料驅動、斷言清晰
+- 報告格式專業，適合面試現場展示
+- 測試執行快速穩定，CI/CD、Docker 皆可整合
 
 ---
 
-### 方式 3：使用 Docker 執行（推薦）
+## 4️⃣ 進階技巧與常見問題
 
-```powershell## 4️⃣ 進階技巧與常見問題
-
-cd ../05-Docker-Test-Environment
-
-docker-compose run --rm api-tests### 進階技巧
-
-```- 如何用 pytest fixture 管理測試資料
-
+### 進階技巧
+- 如何用 pytest fixture 管理測試資料
 - 如何用參數化提升覆蓋率
+- 如何自訂斷言訊息讓錯誤一目了然
 
-> **本章節測試通過率**：100%（8/8 測試案例全數通過）- 如何自訂斷言訊息讓錯誤一目了然
-
-
-
----### 常見問題排除
-
+### 常見問題排除
 - 依賴安裝失敗：請確認 Python/pip 版本與網路
-
-## 3️⃣ 查看測試報告- 測試無法連線：請檢查 API 網路、防火牆或服務狀態
-
+- 測試無法連線：請檢查 API 網路、防火牆或服務狀態
 - 報告無法開啟：請確認路徑與權限
 
-### 步驟 1：開啟 HTML 測試報告
+---
 
-```powershell---
-
-start ../test-reports/api-report.html    # Python 測試報告
-
-start reports/postman-report.html        # Postman 測試報告## 5️⃣ 章節總結
-
-```
+## 5️⃣ 章節總結
 
 本章你已學會：
-
-### 步驟 2：解讀報告內容- 如何安裝與驗證自動化測試環境
-
+- 如何安裝與驗證自動化測試環境
 - 如何執行 Python 與 Postman API 測試
+- 如何產出與解讀專業測試報告
+- 如何展示測試覆蓋率與專業亮點
 
-#### Python 測試報告包含：- 如何產出與解讀專業測試報告
+> **本章最終測試率**：100% 覆蓋所有 API 主要功能與異常情境
+> **推薦下一步**：前往 [Web 自動化章節](../02-Web-Automation-Framework/README.md) 或 [效能測試章節](../03-Performance-Testing/README.md)
 
-- 📊 測試總覽：通過/失敗/跳過數量- 如何展示測試覆蓋率與專業亮點
+## 🚩 Postman 專業業務流測試（面試亮點）
 
-- ⏱️ 執行時間：每個測試的執行時間
-
-- 🔍 詳細結果：失敗的測試有完整 Traceback> **本章最終測試率**：100% 覆蓋所有 API 主要功能與異常情境
-
-- 🌍 環境資訊：Python 版本、依賴套件版本> **推薦下一步**：前往 [Web 自動化章節](../02-Web-Automation-Framework/README.md) 或 [效能測試章節](../03-Performance-Testing/README.md)
-
-
-
-#### Postman 測試報告包含：## 🚩 Postman 專業業務流測試（面試亮點）
-
-- 📈 業務流覆蓋：完整用戶操作流程
-
-- ✅ 驗證結果：狀態碼、資料結構、異常處理### 🎯 設計理念
-
-- 📝 測試腳本：可直接展示自動化思維本 Postman Collection 以「完美自動化測試工程師」的角度設計，模擬真實用戶業務流（註冊→登入→發文→查詢→編輯→刪除→登出），不僅驗證 CRUD，更展現：
-
-- 🎯 變數傳遞：userId、token、postId 自動管理- 嚴謹驗證（狀態碼、資料結構、異常處理）
-
+### 🎯 設計理念
+本 Postman Collection 以「完美自動化測試工程師」的角度設計，模擬真實用戶業務流（註冊→登入→發文→查詢→編輯→刪除→登出），不僅驗證 CRUD，更展現：
+- 嚴謹驗證（狀態碼、資料結構、異常處理）
 - 詳細註解與說明
-
-### 測試案例總覽- 前置/後置資料設計思維
-
+- 前置/後置資料設計思維
 - 結構分明，易於展示
+- 適合面試/作品集展示
 
-| Test ID | 測試名稱 | HTTP方法 | 類型 | 狀態 | 時間 |- 適合面試/作品集展示
+### 🧩 業務流步驟
+1. **用戶註冊**：模擬新用戶註冊，取得 userId
+2. **用戶登入**：取得授權 token
+3. **發表新文章**：以登入身分發文，取得 postId
+4. **查詢文章**：驗證剛剛發表的文章內容
+5. **編輯文章**：驗證內容可正確更新
+6. **刪除文章**：驗證刪除功能與資料清理
+7. **用戶登出**：驗證授權流程完整
 
-|---------|---------|---------|------|------|------|
-
-| TC-001 | 取得所有文章 | GET | 正向 | ✅ | ~300ms |### 🧩 業務流步驟
-
-| TC-002 | 取得單一文章 | GET | 正向 | ✅ | ~200ms |1. **用戶註冊**：模擬新用戶註冊，取得 userId
-
-| TC-003 | 取得不存在的文章 | GET | 負向 | ✅ | ~180ms |2. **用戶登入**：取得授權 token
-
-| TC-004 | 建立新文章 | POST | 正向 | ✅ | ~250ms |3. **發表新文章**：以登入身分發文，取得 postId
-
-| TC-005 | 建立缺少欄位的文章 | POST | 負向 | ✅ | ~220ms |4. **查詢文章**：驗證剛剛發表的文章內容
-
-| TC-006 | 更新文章 | PUT | 正向 | ✅ | ~210ms |5. **編輯文章**：驗證內容可正確更新
-
-| TC-007 | 刪除文章 | DELETE | 正向 | ✅ | ~190ms |6. **刪除文章**：驗證刪除功能與資料清理
-
-| TC-008 | API 回應時間驗證 | GET | 效能 | ✅ | ~280ms |7. **用戶登出**：驗證授權流程完整
-
-
-
-> **本章節覆蓋率**：100%（涵蓋所有 CRUD 與異常處理）### 🛡️ 驗證重點
-
+### 🛡️ 驗證重點
 - 每步驟皆有嚴謹驗證（狀態碼、資料結構、資料正確性）
-
----- 失敗情境與異常處理
-
+- 失敗情境與異常處理
 - 測試腳本有詳細註解，易於溝通展示
+- 變數傳遞（userId、token、postId）展現自動化思維
 
-## 4️⃣ 測試案例詳解- 變數傳遞（userId、token、postId）展現自動化思維
-
-
-
-### 案例 1：正向測試 - 取得所有文章### 💡 面試展示話術
-
+### 💡 面試展示話術
 > 「這份 Postman Collection 不只是單純 CRUD，而是模擬真實用戶業務流，從註冊、登入、發文到刪除與登出，每一步都嚴謹驗證狀態碼、資料結構與異常情境，並設計前置/後置資料流程。這展現了我在 API 測試設計、資料流管理、以及自動化思維上的專業能力，非常適合面試或作品集展示。」
 
-**測試目標**：驗證 GET /posts 能正確回傳文章列表
-
 ### 🚀 執行方式
+```bash
+cd 01-API-Testing-Framework
+newman run postman/API-Test-Collection.json -r htmlextra --reporter-htmlextra-export reports/postman-report.html
+```
+> 產出精美 HTML 報告，可直接於面試現場展示。
 
-```python```bash
+---
 
-def test_get_all_posts(self, api_client):cd 01-API-Testing-Framework
+## 📖 測試範例說明
 
-    response = api_client.get("/posts")newman run postman/API-Test-Collection.json -r htmlextra --reporter-htmlextra-export reports/postman-report.html
+我們會測試一個**免費的公開 API**：`https://jsonplaceholder.typicode.com`
 
-    ```
+### 🏗️ 專案架構
 
-    assert response.status_code == 200> 產出精美 HTML 報告，可直接於面試現場展示。
-
-    posts = response.json()
-
-    assert isinstance(posts, list)---
-
-    assert len(posts) == 100
-
-    ## 📖 測試範例說明
-
-    # 驗證資料結構
-
-    first_post = posts[0]我們會測試一個**免費的公開 API**：`https://jsonplaceholder.typicode.com`
-
-    assert "userId" in first_post
-
-    assert "id" in first_post### 🏗️ 專案架構
-
-    assert "title" in first_post
-
-    assert "body" in first_post```
-
-```01-API-Testing-Framework/
-
+```
+01-API-Testing-Framework/
 ├── 📁 python-api-tests/              # Python 測試框架主目錄
-
-**驗證重點**：│   ├── 📁 tests/                     # 測試案例目錄
-
-- ✅ HTTP 狀態碼正確│   │   ├── test_posts_api.py        # Posts API 測試 (8 cases)
-
-- ✅ 回傳資料型別正確（陣列）│   │   └── __pycache__/             # Python 快取
-
-- ✅ 資料數量完整（100 筆）│   ├── 📁 test-reports/              # 測試報告輸出
-
-- ✅ 資料結構包含必要欄位│   │   └── api-report.html          # HTML 測試報告
-
+│   ├── 📁 tests/                     # 測試案例目錄
+│   │   ├── test_posts_api.py        # Posts API 測試 (8 cases)
+│   │   └── __pycache__/             # Python 快取
+│   ├── 📁 test-reports/              # 測試報告輸出
+│   │   └── api-report.html          # HTML 測試報告
 │   ├── conftest.py                   # pytest 全域配置
-
----│   ├── pytest.ini                    # pytest 設定檔
-
+│   ├── pytest.ini                    # pytest 設定檔
 │   ├── requirements.txt              # Python 依賴套件
-
-### 案例 2：負向測試 - 取得不存在的文章│   └── README.md                     # 測試說明文件
-
+│   └── README.md                     # 測試說明文件
 │
-
-**測試目標**：驗證 API 能正確處理錯誤請求├── 📁 postman/                       # Postman 測試集合
-
+├── 📁 postman/                       # Postman 測試集合
 │   ├── collections/                  # API 測試集合
+│   └── environments/                 # 環境變數
+│
+└── 📄 README.md                      # 本文件 (章節說明)
+```
 
-```python│   └── environments/                 # 環境變數
-
-def test_get_non_existent_post(self, api_client):│
-
-    response = api_client.get("/posts/9999")└── 📄 README.md                      # 本文件 (章節說明)
-
-    ```
-
-    assert response.status_code == 404
-
-    assert response.json() == {}### 測試項目：
-
-```1. **GET** - 取得資料（查詢）
-
+### 測試項目：
+1. **GET** - 取得資料（查詢）
 2. **POST** - 新增資料（建立）
+3. **PUT** - 更新資料（修改）
+4. **DELETE** - 刪除資料
 
-**為什麼重要**：3. **PUT** - 更新資料（修改）
-
-- 驗證錯誤處理機制4. **DELETE** - 刪除資料
-
-- 確保 API 不會洩漏敏感資訊
-
-- 防止前端收到誤導性回應---
-
-- 提升系統穩定性
+---
 
 ## ✨ 框架特色
 
----
-
 ### 💡 核心技術亮點
 
-### 案例 3：效能測試 - API 回應時間
-
 <table>
-
-**測試目標**：驗證 API 回應時間符合 SLA<tr>
-
+<tr>
 <td width="50%" valign="top">
 
-```python
+#### ✅ 測試設計
 
-def test_api_response_time(self, api_client):#### ✅ 測試設計
+- **模組化架構**: 測試案例獨立，易於維護
+- **Fixtures 機制**: 優雅的測試資料管理
+- **參數化測試**: 一個測試跑多組資料
+- **測試隔離**: 每個測試互不影響
+- **斷言清晰**: 詳細的錯誤訊息
 
-    response = api_client.get("/posts")
+#### ✅ 測試覆蓋
 
-    response_time_ms = response.elapsed.total_seconds() * 1000- **模組化架構**: 測試案例獨立，易於維護
-
-    - **Fixtures 機制**: 優雅的測試資料管理
-
-    assert response.status_code == 200- **參數化測試**: 一個測試跑多組資料
-
-    assert response_time_ms < 1000, f"回應時間 {response_time_ms:.2f}ms 超過 SLA"- **測試隔離**: 每個測試互不影響
-
-```- **斷言清晰**: 詳細的錯誤訊息
-
-
-
-**效能基準**：#### ✅ 測試覆蓋
-
-- P50 回應時間：~250ms（目標 < 500ms）✅
-
-- P95 回應時間：~380ms（目標 < 1000ms）✅- **正向測試**: GET, POST, PUT, DELETE
-
-- P99 回應時間：~520ms（目標 < 2000ms）✅- **負向測試**: 404, 錯誤處理
-
+- **正向測試**: GET, POST, PUT, DELETE
+- **負向測試**: 404, 錯誤處理
 - **邊界測試**: 不存在的 ID
+- **效能測試**: 回應時間驗證
 
-> **本章節測試策略**：正向測試 60% + 負向測試 30% + 效能測試 10%- **效能測試**: 回應時間驗證
-
-
-
----</td>
-
+</td>
 <td width="50%" valign="top">
-
-## 5️⃣ 進階技巧
 
 #### ✅ 技術實作
 
-### 技巧 1：參數化測試（資料驅動）
-
 - **requests 套件**: 簡潔的 HTTP 請求
-
-```python- **pytest 框架**: 強大的測試功能
-
-import pytest- **Fixtures**: 測試資料準備與清理
-
+- **pytest 框架**: 強大的測試功能
+- **Fixtures**: 測試資料準備與清理
 - **Markers**: 測試分類與選擇執行
+- **Plugins**: pytest-html 報告生成
 
-@pytest.mark.parametrize("post_id,expected_status", [- **Plugins**: pytest-html 報告生成
+#### ✅ 品質保證
 
-    (1, 200),       # 正常情況
+- **100% 測試通過率**
+- **< 3 秒執行時間**
+- **詳細的測試報告**
+- **CI/CD 整合就緒**
+- **Docker 容器支援**
 
-    (100, 200),     # 邊界值：最大 ID#### ✅ 品質保證
-
-    (101, 404),     # 超出範圍
-
-    (9999, 404),    # 不存在的 ID- **100% 測試通過率**
-
-    (-1, 404),      # 負數 ID- **< 3 秒執行時間**
-
-])- **詳細的測試報告**
-
-def test_get_post_by_id(api_client, post_id, expected_status):- **CI/CD 整合就緒**
-
-    response = api_client.get(f"/posts/{post_id}")- **Docker 容器支援**
-
-    assert response.status_code == expected_status
-
-```</td>
-
+</td>
 </tr>
+</table>
 
-**優勢**：</table>
-
-- 減少重複程式碼
-
-- 提升測試覆蓋率### 🎯 測試金字塔定位
-
-- 清楚展示測試案例
+### 🎯 測試金字塔定位
 
 ```
-
----           ╱╲
-
+           ╱╲
           ╱  ╲   E2E Tests (少量)
-
-### 技巧 2：使用 Fixture 管理測試資料         ╱────╲
-
+         ╱────╲
         ╱      ╲  Integration Tests (適量)
-
-```python       ╱────────╲
-
-import pytest      ╱          ╲  API Tests ← 我們在這裡！
-
-import requests     ╱────────────╲           (快速、穩定、易維護)
-
+       ╱────────╲
+      ╱          ╲  API Tests ← 我們在這裡！
+     ╱────────────╲           (快速、穩定、易維護)
     ╱              ╲  Unit Tests (大量)
+   ╱────────────────╲
 
-@pytest.fixture(scope="session")   ╱────────────────╲
-
-def base_url():
-
-    return "https://jsonplaceholder.typicode.com"API 測試是測試金字塔的中堅力量：
-
+API 測試是測試金字塔的中堅力量：
 ✅ 比 E2E 快速且穩定
+✅ 比 Unit Test 更接近真實場景
+✅ 投資報酬率最高
+```
 
-@pytest.fixture(scope="function")✅ 比 Unit Test 更接近真實場景
+---
 
-def api_client(base_url):✅ 投資報酬率最高
+## 🚀 快速開始
 
-    session = requests.Session()```
+### 📋 環境需求
 
-    session.base_url = base_url
-
-    session.headers.update({---
-
-        "Content-Type": "application/json",
-
-        "Accept": "application/json"## 🚀 快速開始
-
-    })
-
-    yield session### 📋 環境需求
-
-    session.close()
-
-```| 工具 | 版本需求 | 用途 | 安裝指引 |
-
+| 工具 | 版本需求 | 用途 | 安裝指引 |
 |------|----------|------|----------|
-
-**優勢**：| **Python** | 3.12+ | 測試執行環境 | [下載](https://www.python.org/) |
-
-- 自動清理資源| **pip** | 最新版 | 套件管理 | Python 內建 |
-
-- 統一 headers 設定| **Git** | 最新版 | 版本控制 | [下載](https://git-scm.com/) |
-
-- 可加入認證邏輯
+| **Python** | 3.12+ | 測試執行環境 | [下載](https://www.python.org/) |
+| **pip** | 最新版 | 套件管理 | Python 內建 |
+| **Git** | 最新版 | 版本控制 | [下載](https://git-scm.com/) |
 
 ### ⚡ 安裝步驟 (2 分鐘完成)
 
----
-
 ```bash
-
-### 技巧 3：自訂斷言訊息# 方法 1: 使用 Docker (推薦 - 最簡單)
-
+# 方法 1: 使用 Docker (推薦 - 最簡單)
 cd 05-Docker-Test-Environment
+docker-compose run --rm api-tests
 
-```pythondocker-compose run --rm api-tests
+# 方法 2: 本地安裝
+# 1. 進入專案目錄
+cd 01-API-Testing-Framework/python-api-tests
 
-def assert_status_code(response, expected_code):
+# 2. 安裝依賴套件
+pip install -r requirements.txt
 
-    actual = response.status_code# 方法 2: 本地安裝
-
-    assert actual == expected_code, \# 1. 進入專案目錄
-
-        f"HTTP 狀態碼錯誤\n" \cd 01-API-Testing-Framework/python-api-tests
-
-        f"期望: {expected_code}\n" \
-
-        f"實際: {actual}\n" \# 2. 安裝依賴套件
-
-        f"URL: {response.url}\n" \pip install -r requirements.txt
-
-        f"回應時間: {response.elapsed.total_seconds():.2f}s"
-
-```# 3. 驗證安裝
-
+# 3. 驗證安裝
 pytest --version
-
-**優勢**：python -c "import requests; print('✅ 環境準備完成')"
-
-- 失敗時能快速定位問題```
-
-- 包含更多除錯資訊
-
-- 提升測試可維護性### 🎯 執行測試的四種方式
-
-
-
----#### 1️⃣ 基本執行
-
-```bash
-
-### 技巧 4：使用 Markers 分類測試pytest tests/ -v
-
+python -c "import requests; print('✅ 環境準備完成')"
 ```
 
-```ini**輸出預覽**:
+### 🎯 執行測試的四種方式
 
-# pytest.ini```
-
-[pytest]tests/test_posts_api.py::TestPostsAPI::test_get_all_posts PASSED     [ 12%]
-
-markers =tests/test_posts_api.py::TestPostsAPI::test_get_single_post PASSED   [ 25%]
-
-    smoke: 冒煙測試 - 快速驗證核心功能...
-
-    regression: 迴歸測試 - 完整測試套件==================== 8 passed in 2.50s ====================
-
-    api: API 測試標記```
-
+#### 1️⃣ 基本執行
+```bash
+pytest tests/ -v
+```
+**輸出預覽**:
+```
+tests/test_posts_api.py::TestPostsAPI::test_get_all_posts PASSED     [ 12%]
+tests/test_posts_api.py::TestPostsAPI::test_get_single_post PASSED   [ 25%]
+...
+==================== 8 passed in 2.50s ====================
 ```
 
 #### 2️⃣ 生成 HTML 報告
-
-```bash```bash
-
-# 只執行冒煙測試pytest tests/ -v --html=test-reports/api-report.html --self-contained-html
-
-pytest -m smoke```
-
+```bash
+pytest tests/ -v --html=test-reports/api-report.html --self-contained-html
+```
 **結果**: 在 `test-reports/api-report.html` 生成精美報告
 
-# 排除效能測試
-
-pytest -m "not performance"#### 3️⃣ 執行特定測試
-
-``````bash
-
+#### 3️⃣ 執行特定測試
+```bash
 # 執行單一測試檔案
+pytest tests/test_posts_api.py -v
 
-> **本章節提升技巧覆蓋率**：從 60% 提升至 90% 以上pytest tests/test_posts_api.py -v
-
-
-
----# 執行特定測試案例
-
+# 執行特定測試案例
 pytest tests/test_posts_api.py::TestPostsAPI::test_get_all_posts -v
 
-## 6️⃣ 常見問題
-
 # 使用 -k 關鍵字過濾
-
-### Q1: ModuleNotFoundError: No module named 'requests'pytest tests/ -k "get" -v  # 只執行名稱包含 "get" 的測試
-
+pytest tests/ -k "get" -v  # 只執行名稱包含 "get" 的測試
 ```
-
-**問題**：缺少依賴套件
 
 #### 4️⃣ 進階選項
+```bash
+# 顯示詳細輸出 (print statements)
+pytest tests/ -v -s
 
-**解決方案**：```bash
+# 失敗時停止
+pytest tests/ -x
 
-```bash# 顯示詳細輸出 (print statements)
-
-cd 01-API-Testing-Framework/python-api-testspytest tests/ -v -s
-
-pip install -r requirements.txt
-
-python -c "import requests; import pytest; print('✅ OK')"# 失敗時停止
-
-```pytest tests/ -x
-
-
-
----# 最後失敗的測試重跑
-
+# 最後失敗的測試重跑
 pytest tests/ --lf
 
-### Q2: 測試執行失敗: Connection refused
-
 # 並行執行 (需安裝 pytest-xdist)
-
-**問題**：無法連線到 APIpytest tests/ -n auto
-
+pytest tests/ -n auto
 ```
 
-**解決方案**：
+### 📊 預期測試結果
 
-1. 測試網路連線：`ping jsonplaceholder.typicode.com`### 📊 預期測試結果
-
-2. 檢查防火牆設定
-
-3. 瀏覽器確認 API 服務正常：https://jsonplaceholder.typicode.com```
-
+```
 ╔═══════════════════════════════════════════════════════╗
-
----║      API Testing Framework - Execution Summary        ║
-
+║      API Testing Framework - Execution Summary        ║
 ╠═══════════════════════════════════════════════════════╣
-
-### Q3: 測試在 CI 通過但本地失敗║  Platform     │  Python 3.12.12 / pytest 7.4.3       ║
-
+║  Platform     │  Python 3.12.12 / pytest 7.4.3       ║
 ║  Test Files   │  1                                    ║
-
-**問題**：環境差異║  Test Cases   │  8                                    ║
-
+║  Test Cases   │  8                                    ║
 ║  Passed       │  8 (100%) ✅                          ║
-
-**解決方案**：║  Failed       │  0 (0%)                               ║
-
-```bash║  Skipped      │  0 (0%)                               ║
-
-# 使用 Docker 確保環境一致║  Duration     │  2.50s                                ║
-
-cd 05-Docker-Test-Environment║  Avg Time     │  312ms per test                       ║
-
-docker-compose run --rm api-tests╚═══════════════════════════════════════════════════════╝
-
-``````
-
-
-
-------
-
-
-
-### Q4: 測試執行很慢## 📊 測試案例詳解
-
-
-
-**優化建議**：### 🧪 測試案例總覽
-
-```bash
-
-# 並行執行（需安裝 pytest-xdist）| Test ID | 測試名稱 | HTTP方法 | 端點 | 類型 | 狀態 | 時間 |
-
-pip install pytest-xdist|---------|---------|---------|------|------|------|------|
-
-pytest tests/ -n auto| TC-API-001 | 取得所有文章 | GET | /posts | 正向 | ✅ | ~300ms |
-
-| TC-API-002 | 取得單一文章 | GET | /posts/1 | 正向 | ✅ | ~200ms |
-
-# 只執行失敗的測試| TC-API-003 | 取得不存在的文章 | GET | /posts/9999 | 負向 | ✅ | ~180ms |
-
-pytest tests/ --lf| TC-API-004 | 建立新文章 | POST | /posts | 正向 | ✅ | ~250ms |
-
-```| TC-API-005 | 建立缺少欄位的文章 | POST | /posts | 負向 | ✅ | ~220ms |
-
-| TC-API-006 | 更新文章 | PUT | /posts/1 | 正向 | ✅ | ~210ms |
-
-> **本章節問題解決率**：95%（常見問題皆有解決方案）| TC-API-007 | 刪除文章 | DELETE | /posts/1 | 正向 | ✅ | ~190ms |
-
-| TC-API-008 | API 回應時間驗證 | GET | /posts | 效能 | ✅ | ~280ms |
+║  Failed       │  0 (0%)                               ║
+║  Skipped      │  0 (0%)                               ║
+║  Duration     │  2.50s                                ║
+║  Avg Time     │  312ms per test                       ║
+╚═══════════════════════════════════════════════════════╝
+```
 
 ---
 
+## 📊 測試案例詳解
+
+### 🧪 測試案例總覽
+
+| Test ID | 測試名稱 | HTTP方法 | 端點 | 類型 | 狀態 | 時間 |
+|---------|---------|---------|------|------|------|------|
+| TC-API-001 | 取得所有文章 | GET | /posts | 正向 | ✅ | ~300ms |
+| TC-API-002 | 取得單一文章 | GET | /posts/1 | 正向 | ✅ | ~200ms |
+| TC-API-003 | 取得不存在的文章 | GET | /posts/9999 | 負向 | ✅ | ~180ms |
+| TC-API-004 | 建立新文章 | POST | /posts | 正向 | ✅ | ~250ms |
+| TC-API-005 | 建立缺少欄位的文章 | POST | /posts | 負向 | ✅ | ~220ms |
+| TC-API-006 | 更新文章 | PUT | /posts/1 | 正向 | ✅ | ~210ms |
+| TC-API-007 | 刪除文章 | DELETE | /posts/1 | 正向 | ✅ | ~190ms |
+| TC-API-008 | API 回應時間驗證 | GET | /posts | 效能 | ✅ | ~280ms |
+
 ### 📝 重點測試案例深入解析
 
-## 7️⃣ 章節總結
-
 <details>
+<summary><b>🔍 TC-API-001: 取得所有文章 - 展現資料驗證能力</b></summary>
 
-### 你已學會<summary><b>🔍 TC-API-001: 取得所有文章 - 展現資料驗證能力</b></summary>
+#### 測試目標
+驗證 GET /posts 端點能正確回傳所有文章列表，並檢查資料格式與完整性。
 
-
-
-✅ **環境安裝**：Python、pytest、Newman 完整設定  #### 測試目標
-
-✅ **測試執行**：Python 與 Postman 兩種測試方式  驗證 GET /posts 端點能正確回傳所有文章列表，並檢查資料格式與完整性。
-
-✅ **報告產出**：HTML 格式專業測試報告  
-
-✅ **案例設計**：正向、負向、效能、邊界測試  #### 測試程式碼
-
-✅ **進階技巧**：參數化、Fixture、自訂斷言、Markers  ```python
-
-✅ **問題排除**：常見錯誤快速解決方案  def test_get_all_posts(self, api_client):
-
+#### 測試程式碼
+```python
+def test_get_all_posts(self, api_client):
     """
-
----    測試 GET /posts 端點
-
+    測試 GET /posts 端點
     
-
-### 測試成果總覽    驗證項目:
-
+    驗證項目:
     1. HTTP 狀態碼為 200
-
-| 指標 | 數值 | 狀態 |    2. 回應為 JSON 陣列
-
-|------|------|------|    3. 陣列包含 100 個項目
-
-| 測試案例數 | 8 | ✅ |    4. 每個項目包含必要欄位
-
-| 測試通過率 | 100% (8/8) | ✅ |    """
-
-| 測試覆蓋率 | 100% (CRUD + 異常) | ✅ |    # Act - 發送請求
-
-| 執行時間 | < 3 秒 | ✅ |    response = api_client.get("/posts")
-
-| 平均回應時間 | ~250ms | ✅ |    
-
-| 報告完整性 | HTML + 詳細 Traceback | ✅ |    # Assert - 驗證回應
-
+    2. 回應為 JSON 陣列
+    3. 陣列包含 100 個項目
+    4. 每個項目包含必要欄位
+    """
+    # Act - 發送請求
+    response = api_client.get("/posts")
+    
+    # Assert - 驗證回應
     assert response.status_code == 200, "狀態碼應為 200"
-
----    
-
+    
     posts = response.json()
-
-### 專案架構    assert isinstance(posts, list), "回應應為陣列"
-
+    assert isinstance(posts, list), "回應應為陣列"
     assert len(posts) == 100, f"應有 100 個項目，實際: {len(posts)}"
-
-```    
-
-01-API-Testing-Framework/    # 驗證資料結構
-
-├── python-api-tests/    first_post = posts[0]
-
-│   ├── tests/    required_fields = ["userId", "id", "title", "body"]
-
-│   │   └── test_posts_api.py      # 8 個測試案例    for field in required_fields:
-
-│   ├── test-reports/        assert field in first_post, f"缺少必要欄位: {field}"
-
-│   │   └── api-report.html        # HTML 測試報告```
-
-│   ├── conftest.py                # pytest 配置
-
-│   ├── pytest.ini                 # pytest 設定#### 驗證重點
-
-│   └── requirements.txt           # Python 依賴- ✅ **HTTP 狀態碼**: 確認 API 正確回應
-
-├── postman/- ✅ **資料型別**: 驗證回傳 JSON 陣列
-
-│   └── API-Test-Collection.json   # Postman 測試集合- ✅ **資料數量**: 確認完整性
-
-└── README.md                       # 本文件- ✅ **資料結構**: 檢查必要欄位存在
-
+    
+    # 驗證資料結構
+    first_post = posts[0]
+    required_fields = ["userId", "id", "title", "body"]
+    for field in required_fields:
+        assert field in first_post, f"缺少必要欄位: {field}"
 ```
+
+#### 驗證重點
+- ✅ **HTTP 狀態碼**: 確認 API 正確回應
+- ✅ **資料型別**: 驗證回傳 JSON 陣列
+- ✅ **資料數量**: 確認完整性
+- ✅ **資料結構**: 檢查必要欄位存在
 
 #### 執行結果
-
----```
-
+```
 ✅ PASSED
-
-### 面試展示重點Duration: 0.28s
-
+Duration: 0.28s
 Response Time: 245ms
-
-當面試官問「你如何進行 API 測試」時：Status Code: 200 OK
-
+Status Code: 200 OK
 Items Count: 100
-
-1. **展示完整框架**（不只是 Postman 點擊）Data Validation: All fields present
-
-2. **說明測試策略**（正向 60% + 負向 30% + 效能 10%）```
-
-3. **展示專業報告**（HTML 格式，包含詳細資訊）
-
-4. **強調測試覆蓋率**（100% CRUD + 異常處理）#### 面試展示要點
-
-5. **突出進階技巧**（參數化、Fixture、自訂斷言）```
-
-「這個測試展現了我對 API 測試的完整思考：
-
-> 這展現的是「測試工程能力」，而不只是「會用工具」。
-
-1. 不只檢查狀態碼，還驗證資料完整性
-
----2. 使用 assert 訊息，失敗時能快速定位問題
-
-3. 檢查資料結構，確保前端能正確解析
-
-### 下一步4. 可擴展性高，未來可加入 JSON Schema 驗證」
-
+Data Validation: All fields present
 ```
 
-完成 API 測試後，建議：
+#### 面試展示要點
+```
+「這個測試展現了我對 API 測試的完整思考：
+
+1. 不只檢查狀態碼，還驗證資料完整性
+2. 使用 assert 訊息，失敗時能快速定位問題
+3. 檢查資料結構，確保前端能正確解析
+4. 可擴展性高，未來可加入 JSON Schema 驗證」
+```
 
 </details>
 
-1. ✅ 查看 [Web Automation](../02-Web-Automation-Framework/README.md) - 學習 UI 自動化測試
-
-2. ✅ 學習 [Performance Testing](../03-Performance-Testing/README.md) - 深入效能測試<details>
-
-3. ✅ 整合 [CI/CD](../04-CI-CD-Integration/README.md) - 自動化測試流程<summary><b>🔍 TC-API-003: 錯誤處理測試 - 展現負向測試思維</b></summary>
-
-4. ✅ 使用 [Docker](../05-Docker-Test-Environment/README.md) - 容器化測試環境
+<details>
+<summary><b>🔍 TC-API-003: 錯誤處理測試 - 展現負向測試思維</b></summary>
 
 #### 測試目標
+驗證 API 能正確處理不存在的資源請求，回傳適當的錯誤狀態碼。
 
----驗證 API 能正確處理不存在的資源請求，回傳適當的錯誤狀態碼。
-
-
-
-<div align="center">#### 測試程式碼
-
+#### 測試程式碼
 ```python
-
-**🎯 API Testing Framework - 展現專業的測試工程能力**def test_get_non_existent_post(self, api_client):
-
+def test_get_non_existent_post(self, api_client):
     """
-
-Made with ❤️ by Howie    負向測試：取得不存在的文章
-
+    負向測試：取得不存在的文章
     
-
-[🏠 回到主頁](../README.md) | [📖 完整文檔](../06-Documentation/README.md) | [🔄 下一章](../02-Web-Automation-Framework/README.md)    測試場景: 請求不存在的 post ID
-
+    測試場景: 請求不存在的 post ID
     預期行為: 回傳 404 Not Found
-
-</div>    """
-
+    """
     # Act - 請求不存在的資源
     response = api_client.get("/posts/9999")
     
