@@ -39,25 +39,23 @@ class DriverFactory:
             if effective_headless:
                 options.add_argument("--headless=new")
                 options.add_argument("--window-size=1920,1080")
-                # 避免 Headless 新模式的除錯埠衝突
-                options.add_argument("--remote-debugging-port=0")
             else:
                 options.add_argument("--start-maximized")
-            # Add useful options
-            options.add_argument("--disable-extensions")
-            options.add_argument("--disable-popup-blocking")
+            
+            # Core stability options for CI/CD
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
             options.add_argument("--disable-gpu")
+            options.add_argument("--disable-extensions")
+            options.add_argument("--disable-popup-blocking")
+            options.add_argument("--disable-blink-features=AutomationControlled")
             options.add_argument("--no-first-run")
             options.add_argument("--no-default-browser-check")
-            options.add_argument("--no-zygote")
-
-            # 在 CI 上為每個 session 建立獨立且可寫入的使用者資料夾，避免被鎖定
+            
+            # CI-specific: use incognito to avoid profile locks
             if ci_env:
-                import tempfile
-                user_data_dir = tempfile.mkdtemp(prefix="chrome-profile-")
-                options.add_argument(f"--user-data-dir={user_data_dir}")
+                options.add_argument("--incognito")
+            
             # Selenium 4.6+ automatically manages ChromeDriver
             driver = webdriver.Chrome(options=options)
             
