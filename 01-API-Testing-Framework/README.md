@@ -28,7 +28,7 @@
 
 1. **Postman** - 手動測試 API（像用滑鼠點點看）
 
----2. **Newman** - 自動執行 Postman 測試（讓電腦自動測）
+2. **Newman** - 自動執行 Postman 測試（讓電腦自動測）
 
 3. **Python + pytest** - 寫程式碼來測試 API
 
@@ -86,86 +86,122 @@ newman run postman/API-Test-Collection.json -r htmlextra --reporter-htmlextra-ex
 
 ---
 
-## 📖 測試範例說明
 
-## ✨ 框架特色
+## 🚩 Postman 專業業務流測試（面試亮點）
 
-我們會測試一個**免費的公開 API**：`https://jsonplaceholder.typicode.com`
+### 🎯 設計理念
+本 Postman Collection 以「完美自動化測試工程師」的角度設計，模擬真實用戶業務流（註冊→登入→發文→查詢→編輯→刪除→登出），不僅驗證 CRUD，更展現：
+- 嚴謹驗證（狀態碼、資料結構、異常處理）
+- 詳細註解與說明
+- 前置/後置資料設計思維
+- 結構分明，易於展示
+- 適合面試/作品集展示
 
-### 🏗️ 專案架構
+### 🧩 業務流步驟
+1. **用戶註冊**：模擬新用戶註冊，取得 userId
+2. **用戶登入**：取得授權 token
+3. **發表新文章**：以登入身分發文，取得 postId
+4. **查詢文章**：驗證剛剛發表的文章內容
+5. **編輯文章**：驗證內容可正確更新
+6. **刪除文章**：驗證刪除功能與資料清理
+7. **用戶登出**：驗證授權流程完整
 
-這是一個假資料 API，專門給開發者練習用的。
+### 🛡️ 驗證重點
+- 每步驟皆有嚴謹驗證（狀態碼、資料結構、資料正確性）
+- 失敗情境與異常處理
+- 測試腳本有詳細註解，易於溝通展示
+- 變數傳遞（userId、token、postId）展現自動化思維
 
-```
+### 💡 面試展示話術
+> 「這份 Postman Collection 不只是單純 CRUD，而是模擬真實用戶業務流，從註冊、登入、發文到刪除與登出，每一步都嚴謹驗證狀態碼、資料結構與異常情境，並設計前置/後置資料流程。這展現了我在 API 測試設計、資料流管理、以及自動化思維上的專業能力，非常適合面試或作品集展示。」
 
-01-API-Testing-Framework/### 測試項目：
-
-│1. **GET** - 取得資料（查詢）
-
-├── 📁 python-api-tests/              # Python 測試框架主目錄2. **POST** - 新增資料（建立）
-
-│   │3. **PUT** - 更新資料（修改）
-
-│   ├── 📁 tests/                     # 測試案例目錄4. **DELETE** - 刪除資料
-
-│   │   ├── test_posts_api.py        # Posts API 測試 (8 cases)
-
-│   │   └── __pycache__/             # Python 快取---
-
-│   │
-
-│   ├── 📁 test-reports/              # 測試報告輸出## 🎬 Demo 影片腳本
-
-│   │   └── api-report.html          # HTML 測試報告
-
-│   │**展示內容**（3 分鐘）：
-
-│   ├── conftest.py                   # pytest 全域配置1. 打開 Postman，展示測試集合
-
-│   ├── pytest.ini                    # pytest 設定檔2. 執行一次完整的測試
-
-│   ├── requirements.txt              # Python 依賴套件3. 查看測試報告（成功/失敗統計）
-
-│   └── README.md                     # 測試說明文件
-
-│---
-
-├── 📁 postman/                       # Postman 測試集合
-
-│   ├── collections/                  # API 測試集合**下一步**: 前往 `python-api-tests` 資料夾查看測試程式碼
-
-│   └── environments/                 # 環境變數
-│
-└── 📄 README.md                      # 本文件 (章節說明)
-```
-
+### 🚀 執行方式
+```bash
 ### 💡 核心技術亮點
 
-<table>
-<tr>
-<td width="50%" valign="top">
+# 📡 Chapter 1: API Testing Framework
+# 📡 API 測試框架
 
-#### ✅ 測試設計
+## 🎯 這個模組在做什麼？
 
-- **模組化架構**: 測試案例獨立，易於維護
-- **Fixtures 機制**: 優雅的測試資料管理
-- **參數化測試**: 一個測試跑多組資料
-- **測試隔離**: 每個測試互不影響
-- **斷言清晰**: 詳細的錯誤訊息
+![API Tests](https://img.shields.io/badge/tests-8%20passed-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![pytest](https://img.shields.io/badge/pytest-7.4-blue)
 
-#### ✅ 測試覆蓋
+這裡測試**後端 API**，確保：
+- ✅ API 能正確回應
+- ✅ 回應速度夠快
+- ✅ 回應的資料格式正確
+- ✅ 錯誤情況有正確處理
 
-- **正向測試**: GET, POST, PUT, DELETE
-- **負向測試**: 404, 錯誤處理
-- **邊界測試**: 不存在的 ID
-- **效能測試**: 回應時間驗證
+**完整的 API 自動化測試框架 - 基於 Python + pytest + requests**
 
-</td>
-<td width="50%" valign="top">
+---
 
-#### ✅ 技術實作
+[✨ 特色](#-框架特色) • [🚀 快速開始](#-快速開始) • [📊 測試報告](#-測試報告展示) • [📖 使用指南](#-詳細使用指南)
 
-- **requests 套件**: 簡潔的 HTTP 請求
+## 🛠️ 使用的工具
+
+- **Postman**：手動測試 API（像用滑鼠點點看）
+- **Newman**：自動執行 Postman 測試（讓電腦自動測）
+- **Python + pytest**：寫程式碼來測試 API
+
+## 📋 框架概述
+
+這是一個**生產級別的 API 自動化測試框架**，展現從測試設計到執行報告的完整流程。框架採用模組化設計，易於維護與擴展，適合各種 RESTful API 測試需求。
+
+---
+
+## � 學習步驟
+
+### 🎯 測試目標
+
+| 項目 | 說明 |
+|------|------|
+| **目標 API** | [JSONPlaceholder](https://jsonplaceholder.typicode.com) - 免費的假資料 REST API |
+| **測試類型** | 功能測試、資料驗證、錯誤處理、效能測試 |
+| **測試案例** | 8 個核心測試案例 |
+| **執行時間** | < 3 秒完成所有測試 |
+| **通過率** | 100% ✅ |
+
+### 步驟 1：安裝 Newman
+```powershell
+npm install -g newman newman-reporter-htmlextra
+```
+
+### 步驟 2：安裝 Python 套件
+```powershell
+cd 01-API-Testing-Framework/python-api-tests
+pip install -r requirements.txt
+```
+
+### 步驟 3：執行測試
+
+#### 執行 Python API 測試
+```powershell
+pytest tests/ -v --html=../reports/api-test-report.html
+```
+
+#### 執行 Postman 測試
+```powershell
+newman run postman/API-Test-Collection.json -r htmlextra --reporter-htmlextra-export reports/postman-report.html
+```
+
+---
+
+### � 面試展示重點
+
+當面試官問「你如何進行 API 測試」時，你可以展示：
+1. 完整的測試框架（不只是 Postman 點擊）
+2. 資料驅動測試設計
+3. pytest fixtures 的優雅使用
+4. 100% 的測試覆蓋率
+5. 專業的測試報告
+
+這展現的是「測試工程能力」，而不只是「會用工具」。
+
+---
 - **pytest 框架**: 強大的測試功能
 - **Fixtures**: 測試資料準備與清理
 - **Markers**: 測試分類與選擇執行

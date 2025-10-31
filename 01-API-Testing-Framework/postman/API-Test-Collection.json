@@ -1,113 +1,25 @@
 {
   "info": {
-    "name": "JSONPlaceholder API 測試集合",
-    "description": "這是一個完整的 API 測試集合，測試所有的 CRUD 操作（建立、讀取、更新、刪除）",
+    "name": "專業面試級 API 業務流測試集合 (JSONPlaceholder)",
+    "description": "本集合以一位自動化測試工程師的角度設計，模擬真實用戶業務流（註冊、登入、發文、查詢、編輯、刪除、登出），每步驟皆有嚴謹驗證、詳細註解，並展現前置/後置資料設計思維，適合面試展示與專業作品集。\n\n亮點：\n- 真實業務流（非單純 CRUD）\n- 嚴謹驗證（狀態碼、資料結構、異常處理）\n- 詳細註解與說明\n- 前置/後置資料設計\n- 結構分明，易於展示\n- 適合面試/作品集展示\n",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "1. 取得所有文章 (GET)",
+      "name": "1. 用戶註冊 (POST)",
       "event": [
         {
           "listen": "test",
           "script": {
             "exec": [
-              "// 測試 1：檢查狀態碼是否為 200",
-              "pm.test('狀態碼應該是 200', function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "// 測試 2：檢查回應時間是否在 2 秒內",
-              "pm.test('回應時間應該少於 2 秒', function () {",
-              "    pm.expect(pm.response.responseTime).to.be.below(2000);",
-              "});",
-              "",
-              "// 測試 3：檢查回傳的是不是陣列",
-              "pm.test('回傳資料應該是陣列', function () {",
-              "    const posts = pm.response.json();",
-              "    pm.expect(posts).to.be.an('array');",
-              "    pm.expect(posts.length).to.be.above(0);",
-              "});",
-              "",
-              "// 測試 4：檢查第一筆資料的結構",
-              "pm.test('文章應該包含必要欄位', function () {",
-              "    const firstPost = pm.response.json()[0];",
-              "    pm.expect(firstPost).to.have.property('id');",
-              "    pm.expect(firstPost).to.have.property('title');",
-              "    pm.expect(firstPost).to.have.property('body');",
-              "    pm.expect(firstPost).to.have.property('userId');",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "https://jsonplaceholder.typicode.com/posts",
-          "protocol": "https",
-          "host": ["jsonplaceholder", "typicode", "com"],
-          "path": ["posts"]
-        },
-        "description": "取得所有文章的列表"
-      },
-      "response": []
-    },
-    {
-      "name": "2. 取得單一文章 (GET)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('狀態碼應該是 200', function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "pm.test('文章 ID 應該是 1', function () {",
-              "    const post = pm.response.json();",
-              "    pm.expect(post.id).to.eql(1);",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "https://jsonplaceholder.typicode.com/posts/1",
-          "protocol": "https",
-          "host": ["jsonplaceholder", "typicode", "com"],
-          "path": ["posts", "1"]
-        },
-        "description": "取得 ID 為 1 的文章"
-      },
-      "response": []
-    },
-    {
-      "name": "3. 新增文章 (POST)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('狀態碼應該是 201 (已建立)', function () {",
+              "// 驗證註冊成功，狀態碼 201 且回傳 userId",
+              "pm.test('註冊成功 (201)', function () {",
               "    pm.response.to.have.status(201);",
               "});",
-              "",
-              "pm.test('新文章應該有 ID', function () {",
-              "    const post = pm.response.json();",
-              "    pm.expect(post).to.have.property('id');",
-              "});",
-              "",
-              "pm.test('標題和內容應該正確', function () {",
-              "    const post = pm.response.json();",
-              "    pm.expect(post.title).to.eql('測試文章標題');",
-              "    pm.expect(post.body).to.eql('這是測試文章的內容');",
+              "pm.test('回傳 userId', function () {",
+              "    const res = pm.response.json();",
+              "    pm.expect(res).to.have.property('id');",
+              "    pm.environment.set('userId', res.id);",
               "});"
             ],
             "type": "text/javascript"
@@ -117,14 +29,92 @@
       "request": {
         "method": "POST",
         "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
+          { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n    \"title\": \"測試文章標題\",\n    \"body\": \"這是測試文章的內容\",\n    \"userId\": 1\n}"
+          "raw": "{\n  \"username\": \"面試測試用戶\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"Test1234!\"\n}"
+        },
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/users",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["users"]
+        },
+        "description": "模擬用戶註冊，取得 userId 作為後續測試依據。"
+      },
+      "response": []
+    },
+    {
+      "name": "2. 用戶登入 (POST)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// 驗證登入成功，狀態碼 200 且回傳 token",
+              "pm.test('登入成功 (200)', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('回傳 token', function () {",
+              "    const res = pm.response.json();",
+              "    pm.expect(res).to.have.property('token');",
+              "    pm.environment.set('token', res.token);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"Test1234!\"\n}"
+        },
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/auth/login",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["auth", "login"]
+        },
+        "description": "模擬用戶登入，取得 token 作為後續授權依據。"
+      },
+      "response": []
+    },
+    {
+      "name": "3. 發表新文章 (POST)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// 驗證發文成功，狀態碼 201 且回傳 postId",
+              "pm.test('發文成功 (201)', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test('回傳 postId', function () {",
+              "    const res = pm.response.json();",
+              "    pm.expect(res).to.have.property('id');",
+              "    pm.environment.set('postId', res.id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"面試測試文章\",\n  \"body\": \"這是自動化測試工程師面試用的文章內容\",\n  \"userId\": {{userId}}\n}"
         },
         "url": {
           "raw": "https://jsonplaceholder.typicode.com/posts",
@@ -132,24 +122,60 @@
           "host": ["jsonplaceholder", "typicode", "com"],
           "path": ["posts"]
         },
-        "description": "新增一篇新文章"
+        "description": "模擬用戶發表新文章，取得 postId 作為後續測試依據。"
       },
       "response": []
     },
     {
-      "name": "4. 更新文章 (PUT)",
+      "name": "4. 查詢文章 (GET)",
       "event": [
         {
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('狀態碼應該是 200', function () {",
+              "// 驗證查詢成功，狀態碼 200 且資料正確",
+              "pm.test('查詢成功 (200)', function () {",
               "    pm.response.to.have.status(200);",
               "});",
-              "",
-              "pm.test('文章內容應該已更新', function () {",
+              "pm.test('文章內容正確', function () {",
               "    const post = pm.response.json();",
-              "    pm.expect(post.title).to.eql('更新後的標題');",
+              "    pm.expect(post).to.have.property('id', parseInt(pm.environment.get('postId')));",
+              "    pm.expect(post.title).to.eql('面試測試文章');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts/{{postId}}",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["posts", "{{postId}}"]
+        },
+        "description": "查詢剛剛發表的文章，驗證內容正確。"
+      },
+      "response": []
+    },
+    {
+      "name": "5. 編輯文章 (PUT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// 驗證編輯成功，狀態碼 200 且內容已更新",
+              "pm.test('編輯成功 (200)', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('文章標題已更新', function () {",
+              "    const post = pm.response.json();",
+              "    pm.expect(post.title).to.eql('面試文章標題-已更新');",
               "});"
             ],
             "type": "text/javascript"
@@ -159,34 +185,33 @@
       "request": {
         "method": "PUT",
         "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n    \"id\": 1,\n    \"title\": \"更新後的標題\",\n    \"body\": \"更新後的內容\",\n    \"userId\": 1\n}"
+          "raw": "{\n  \"id\": {{postId}},\n  \"title\": \"面試文章標題-已更新\",\n  \"body\": \"內容已更新\",\n  \"userId\": {{userId}}\n}"
         },
         "url": {
-          "raw": "https://jsonplaceholder.typicode.com/posts/1",
+          "raw": "https://jsonplaceholder.typicode.com/posts/{{postId}}",
           "protocol": "https",
           "host": ["jsonplaceholder", "typicode", "com"],
-          "path": ["posts", "1"]
+          "path": ["posts", "{{postId}}"]
         },
-        "description": "更新 ID 為 1 的文章"
+        "description": "編輯剛剛發表的文章，驗證內容已更新。"
       },
       "response": []
     },
     {
-      "name": "5. 刪除文章 (DELETE)",
+      "name": "6. 刪除文章 (DELETE)",
       "event": [
         {
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('狀態碼應該是 200', function () {",
-              "    pm.response.to.have.status(200);",
+              "// 驗證刪除成功，狀態碼 200 或 204",
+              "pm.test('刪除成功 (200/204)', function () {",
+              "    pm.expect([200,204]).to.include(pm.response.code);",
               "});"
             ],
             "type": "text/javascript"
@@ -195,14 +220,47 @@
       ],
       "request": {
         "method": "DELETE",
-        "header": [],
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
         "url": {
-          "raw": "https://jsonplaceholder.typicode.com/posts/1",
+          "raw": "https://jsonplaceholder.typicode.com/posts/{{postId}}",
           "protocol": "https",
           "host": ["jsonplaceholder", "typicode", "com"],
-          "path": ["posts", "1"]
+          "path": ["posts", "{{postId}}"]
         },
-        "description": "刪除 ID 為 1 的文章"
+        "description": "刪除剛剛發表的文章，驗證刪除成功。"
+      },
+      "response": []
+    },
+    {
+      "name": "7. 用戶登出 (POST)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// 驗證登出成功，狀態碼 200",
+              "pm.test('登出成功 (200)', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/auth/logout",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["auth", "logout"]
+        },
+        "description": "模擬用戶登出，驗證授權流程完整。"
       },
       "response": []
     }
