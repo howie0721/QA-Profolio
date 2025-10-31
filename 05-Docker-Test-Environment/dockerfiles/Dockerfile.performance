@@ -1,0 +1,36 @@
+# Dockerfile for Performance Testing
+# 用途: 執行 Locust 效能測試
+
+FROM python:3.12-slim
+
+# 設定工作目錄
+WORKDIR /app
+
+# 複製專案檔案
+COPY 03-Performance-Testing/ /app/03-Performance-Testing/
+
+# 安裝 Python 依賴
+RUN pip install --no-cache-dir -r /app/03-Performance-Testing/locust-tests/requirements.txt
+
+# 切換到測試目錄
+WORKDIR /app/03-Performance-Testing/locust-tests
+
+# 設定預設執行命令
+# 執行 Locust 無頭模式測試 (不啟動 Web UI)
+CMD ["locust", \
+     "-f", "locustfile.py", \
+     "--host=https://reqres.in", \
+     "--users=10", \
+     "--spawn-rate=2", \
+     "--run-time=30s", \
+     "--headless", \
+     "--html=reports/performance-docker-report.html"]
+
+# 健康檢查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import locust" || exit 1
+
+# 標籤資訊
+LABEL maintainer="QA Portfolio"
+LABEL description="Performance Testing Container with Locust"
+LABEL version="1.0"

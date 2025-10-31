@@ -1,0 +1,78 @@
+# Dockerfile for Web Automation Testing
+# 用途: 執行 Selenium Web UI 測試 (Chrome Headless)
+
+FROM python:3.12-slim
+
+# 安裝系統依賴 (Chrome 和相關工具)
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    unzip \
+    curl \
+    ca-certificates \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libatspi2.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libwayland-client0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxkbcommon0 \
+    libxrandr2 \
+    xdg-utils \
+    libu2f-udev \
+    libvulkan1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# 安裝 Google Chrome Stable
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
+
+# 驗證 Chrome 安裝
+RUN which google-chrome-stable && google-chrome-stable --version
+
+# 設定工作目錄
+WORKDIR /app
+
+# 複製專案檔案
+COPY 02-Web-Automation-Framework/ /app/02-Web-Automation-Framework/
+
+# 安裝 Python 依賴
+RUN pip install --no-cache-dir -r /app/02-Web-Automation-Framework/selenium-pom/requirements.txt
+
+# 設定環境變數 (強制使用 headless 模式)
+ENV CI=true
+ENV HEADLESS=true
+ENV DISPLAY=:99
+
+# 切換到測試目錄
+WORKDIR /app/02-Web-Automation-Framework/selenium-pom
+
+# 設定預設執行命令
+# 執行 Web 測試並生成 HTML 報告
+CMD ["pytest", \
+     "tests/", \
+     "-v", \
+     "--html=test-reports/web-docker-report.html", \
+     "--self-contained-html"]
+
+# 健康檢查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import selenium; from selenium import webdriver" || exit 1
+
+# 標籤資訊
+LABEL maintainer="QA Portfolio"
+LABEL description="Web Automation Testing Container with Selenium and Chrome"
+LABEL version="1.0"

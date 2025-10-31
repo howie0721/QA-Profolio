@@ -1,0 +1,68 @@
+version: '3.8'
+
+# Docker Compose 設定檔
+# 用途: 同時管理多個測試容器
+# 使用方式: docker-compose up
+
+services:
+  # ========================================
+  # API 測試容器
+  # ========================================
+  api-tests:
+    build:
+      context: ..
+      dockerfile: 05-Docker-Test-Environment/dockerfiles/Dockerfile.api
+    container_name: qa-portfolio-api-tests
+    volumes:
+      # 將測試報告輸出到本機
+      - ../01-API-Testing-Framework/test-reports:/app/01-API-Testing-Framework/test-reports
+    environment:
+      - CI=true
+      - PYTHONUNBUFFERED=1
+    networks:
+      - qa-test-network
+
+  # ========================================
+  # Web 自動化測試容器
+  # ========================================
+  web-tests:
+    build:
+      context: ..
+      dockerfile: 05-Docker-Test-Environment/dockerfiles/Dockerfile.web
+    container_name: qa-portfolio-web-tests
+    volumes:
+      # 將測試報告輸出到本機
+      - ../02-Web-Automation-Framework/selenium-pom/test-reports:/app/02-Web-Automation-Framework/selenium-pom/test-reports
+    environment:
+      - CI=true
+      - HEADLESS=true
+      - PYTHONUNBUFFERED=1
+    # 為 Chrome 分配更多共享記憶體
+    shm_size: '2gb'
+    networks:
+      - qa-test-network
+
+  # ========================================
+  # 效能測試容器
+  # ========================================
+  performance-tests:
+    build:
+      context: ..
+      dockerfile: 05-Docker-Test-Environment/dockerfiles/Dockerfile.performance
+    container_name: qa-portfolio-performance-tests
+    volumes:
+      # 將測試報告輸出到本機
+      - ../03-Performance-Testing/locust-tests/reports:/app/03-Performance-Testing/locust-tests/reports
+    environment:
+      - CI=true
+      - PYTHONUNBUFFERED=1
+    networks:
+      - qa-test-network
+
+# ========================================
+# 網路設定
+# ========================================
+networks:
+  qa-test-network:
+    driver: bridge
+    name: qa-test-network

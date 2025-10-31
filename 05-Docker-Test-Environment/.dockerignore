@@ -1,0 +1,48 @@
+# Docker 建置時忽略的檔案
+# 用途: 減少 Docker image 大小,加快建置速度
+
+# Git 相關
+.git/
+.gitignore
+.github/
+
+# Python 相關
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# IDE 相關
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 測試報告 (會在容器內重新生成)
+test-reports/
+reports/
+*.html
+screenshots/
+
+# 文件
+*.md
+DEPLOYMENT_SUCCESS.md
+
+# Docker 相關
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# 其他
+.DS_Store
+Thumbs.db
+*.log
