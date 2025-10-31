@@ -144,6 +144,25 @@ class BasePage:
         return self.driver.current_url
     
     
+    def wait_for_url_contains(self, url_fragment, timeout=10):
+        """
+        Wait for URL to contain a specific string
+        
+        Args:
+            url_fragment: String that should be in the URL
+            timeout: Maximum time to wait (seconds)
+            
+        Returns:
+            True if URL contains the fragment within timeout, False otherwise
+        """
+        try:
+            wait = WebDriverWait(self.driver, timeout)
+            wait.until(EC.url_contains(url_fragment))
+            return True
+        except TimeoutException:
+            return False
+    
+    
     def take_screenshot(self, filename):
         """
         Take a screenshot of the current page

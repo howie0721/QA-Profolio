@@ -120,6 +120,8 @@ class LoginPage(BasePage):
     
     def logout(self):
         """
-        Click the logout button
+        Click the logout button and wait for redirect
         """
         self.click(self.LOGOUT_BUTTON)
+        # Wait for URL to change (redirect to login page)
+        self.wait_for_url_contains("/login", timeout=10)
