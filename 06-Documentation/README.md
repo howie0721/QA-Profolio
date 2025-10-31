@@ -184,7 +184,3 @@ cat api-docs/jsonplaceholder-api.md
 - ✅ 編寫 API 測試文件
 - ✅ 優化專案 README
 - ✅ 建立文件版本控制流程
-
----
-
-**下一章**: [07-Advanced-Topics](../07-Advanced-Topics) - 進階主題（測試資料管理、Mock Server、Contract Testing 等）
