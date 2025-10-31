@@ -9,6 +9,8 @@ Note: Selenium 4.6+ includes automatic driver management, so we don't need webdr
 """
 
 import os
+import tempfile
+import uuid
 from selenium import webdriver
 
 
@@ -52,9 +54,11 @@ class DriverFactory:
             options.add_argument("--no-first-run")
             options.add_argument("--no-default-browser-check")
             
-            # CI-specific: use incognito to avoid profile locks
-            if ci_env:
-                options.add_argument("--incognito")
+            # CRITICAL FIX: Create unique temp directory with random UUID
+            # This ensures EVERY test session gets a completely unique profile directory
+            temp_dir = tempfile.gettempdir()
+            unique_profile = os.path.join(temp_dir, f"chrome-test-{uuid.uuid4().hex[:8]}")
+            options.add_argument(f"--user-data-dir={unique_profile}")
             
             # Selenium 4.6+ automatically manages ChromeDriver
             driver = webdriver.Chrome(options=options)
